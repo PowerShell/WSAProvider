@@ -130,13 +130,13 @@ function Find-Package
         [string[]]
         $names,
 
-        [string]
+        [Version]
         $requiredVersion,
 
-        [string]
+        [Version]
         $minimumVersion,
 
-        [string]
+        [Version]
         $maximumVersion
     )   
 
@@ -224,6 +224,23 @@ function Find-Package
             $ResourceId = $options[$script:ResourceId]
         }
     }             
+        
+    #allow searching for package with packagename and packagename.appx extension
+    $pkgNames = @()
+    if(-not($namesParameterEmpty))
+    {        
+        foreach($name in $names)
+        {            
+            if(-not($name.EndsWith(".appx")))
+            {
+                $pkgNames += ($name+".appx")
+            }
+            else
+            {
+                $pkgNames+=$name
+            }
+        }
+    }
     
     foreach($source in $Sources)
     {
@@ -239,7 +256,8 @@ function Find-Package
             continue
         }
 
-        $packages = Get-AppxPackagesFromPath -path $location        
+        $packages = Get-AppxPackagesFromPath -path $location   
+           
         foreach($pkg in  $packages)
         {
             if($request.IsCanceled)
@@ -257,7 +275,7 @@ function Find-Package
             # $pkgName has to match any of the supplied names, using PowerShell wildcards
             if(-not($namesParameterEmpty))
             {
-                if(-not(($names | Microsoft.PowerShell.Core\ForEach-Object { if ($pkgName -like $_){return $true; break} } -End {return $false})))
+                if(-not(($pkgNames | Microsoft.PowerShell.Core\ForEach-Object {if ($pkgName -like $_){return $true; break} } -End {return $false})))
                 {
                     continue
                 }
