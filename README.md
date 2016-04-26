@@ -4,16 +4,24 @@ A PackageManagement provider to discover, install and inventory Windows Server A
 ### Supported Platforms
 Currently, the provider is supported on Nano Server Only
 
-### Cmdlets WSAProvider supports
+### Cmdlets
+Module introduces Find-AppxPackage cmdlet
+```powershell
+Find-AppxPackage [[-Name] <string[]>] [-MinimumVersion <version>] [-MaximumVersion <version>] [-RequiredVersion <version>] [-Architecture <string>] [-ResourceId <string>] [-Source <string[]>] [<CommonParameters>]
 ```
+It also supports following PackageManagement cmdlets
+```powershell
 Find-Package
+Get-Package
 Install-Package
 Save-Package
-Get-Package
 Uninstall-Package
-Find-AppxPackage [[-Name] <string[]>] [-MinimumVersion <version>] [-MaximumVersion <version>] [-RequiredVersion <version>] [-Architecture <string>] [-ResourceId <string>] [-Source <string[]>] [<CommonParameters>]
-
+Register-PackageSource
+UnRegister-PackageSource
+Get-PackageSource
+Set-PackageSource
 ```
+
 ### How to Install
 ```powershell
 Install-PackageProvider -Name WSAProvider 
@@ -35,7 +43,7 @@ Find-Package -Provider WSAProvider
 ```
 or
 ```powershell
-Find-AppxPackage -Source <WSAPackageSource>
+Find-AppxPackage
 ```
 Install WSA package. Pipeline from find-package is supported.
 ```powershell
@@ -61,9 +69,9 @@ Register network share as package source
  New-PSDrive -Name Z -PSProvider FileSystem -Root \\Mydevbox2\WSAPackages -Credential mytestuser
  Register-PackageSource -Name dev2 -ProviderName WSAProvider -Location Z:\
 ```
-Find WSA packages from all registered sources
+Find WSA packages from a specific source
 ```powershell
-	Find-Package -ProviderName WSAProvider
+	Find-Package -ProviderName WSAProvider -Source dev2
 ```
 Find WSA package with the given name(with or without extension)
 ```powershell	
