@@ -1,17 +1,22 @@
 ### Introduction
-A PackageManagement provider to discover, install and inventory windows server app packages. 
+A PackageManagement provider to discover, install and inventory Windows Server App (WSA) packages. WSA is an APPX based installer for Windows Server. It is the only installer available on Nano Server.  For more information on WSA, please read this <a href="http://blogs.technet.com/b/nanoserver/archive/2015/11/18/installing-windows-server-apps-on-nano-server.aspx">blog</a>.
 
 ### Supported Platforms
 Currently, the provider is supported on Nano Server Only
 
-### Cmdlets
+### Cmdlets WSAProvider supports
 ```
+Find-Package
+Install-Package
+Save-Package
+Get-Package
+Uninstall-Package
 Find-AppxPackage [[-Name] <string[]>] [-MinimumVersion <version>] [-MaximumVersion <version>] [-RequiredVersion <version>] [-Architecture <string>] [-ResourceId <string>] [-Source <string[]>] [<CommonParameters>]
 
 ```
 ### How to Install
 ```powershell
-Install-PackageProvider -Name WSAProvider -Source <Source>
+Install-PackageProvider -Name WSAProvider 
 Import-PackageProvider WSAProvider
 ```
 List all installed Providers
@@ -24,24 +29,24 @@ Register a package source for WSA packages. It can either be a local folder or a
 ```powershell
 Register-PackageSource -ProviderName WSAProvider -Name WSAPackageSource -Location <WSAPackageLocation>
 ```
-Discover available Appx Packages
+Discover available WSA Packages. Wildcard is supported for the WSA package name.
 ```powershell
-Find-Package -ProviderName WSAProvider -source <WSAPackageSource>
+Find-Package -Provider WSAProvider 
 ```
 or
 ```powershell
 Find-AppxPackage -Source <WSAPackageSource>
 ```
-Install wsa package
+Install WSA package. Pipeline from find-package is supported.
 ```powershell
-Install-Package -ProviderName WSAProvider -Name <WSAPackage.appx>
+Install-Package -ProviderName WSAProvider -Name <WSAPackageName>
 ```
 Get list of installed packages
 ```powershell
 Get-Package -ProviderName WSAProvider
 ```
 
-UnInstall wsa Package
+UnInstall WSA Package
 ```powershell
  UnInstall-Package -Name <WSAPackage> -ProviderName WSAProvider
 ```
@@ -56,41 +61,42 @@ Register network share as package source
  New-PSDrive -Name Z -PSProvider FileSystem -Root \\Mydevbox2\WSAPackages -Credential mytestuser
  Register-PackageSource -Name dev2 -ProviderName WSAProvider -Location Z:\
 ```
-Find wsa packages from all registered sources
+Find WSA packages from all registered sources
 ```powershell
 	Find-Package -ProviderName WSAProvider
 ```
-Find wsa package with the given name(with or without extension)
+Find WSA package with the given name(with or without extension)
 ```powershell	
 	Find-Package -ProviderName WSAProvider -Name TestPackage
 	Find-Package -ProviderName WSAProvider -Name TestPackage.appx
+	Find-Package -source dev2 -name TestP*
 ```
-Find wsa packages with given Resource Id
+Find WSA packages with given Resource Id
 ```powershell	
 	Find-Package -ProviderName WSAProvider -ResourceId NorthAmerica
 ```
-Find wsa packages with given Architecture
+Find WSA packages with given Architecture
 ```powershell	
 	Find-Package -ProviderName WSAProvider -Architecture x64
 ```	
-Find wsa package that have the given version
+Find WSA package that have the given version
 ```powershell	
 	Find-Package -ProviderName WSAProvider -RequiredVersion 1.4.0.0 -Name TestPackage.appx
 ```
-Installing wsa package with the given name(with or without extension)
+Installing WSA package with the given name(with or without extension)
 ```powershell	
 	Install-Package -providername WSAProvider -Name testpackage
 	Install-Package -providername WSAProvider -Name testpackage.appx
 ```	
-Install wsa package that have the given version
+Install WSA package that have the given version
 ```powershell 
 	Install-Package -Name TestPackage.appx -requiredVersion 1.4.0.0 -Source Local
 ```	
-Install all the results of find
+Install all the WSA package from the search result
 ```powershell	
 	Find-package -ProviderName WSAProvider | Install-Package
 ```
-Save the latest version of wsa package to the directory that matches the LiteralPath
+Save the latest version of WSA package to the directory that matches the LiteralPath
 ```powershell	
 	Save-Package -ProviderName WSAProvider -Name TestPackage -LiteralPath C:\temp\
 ```	
